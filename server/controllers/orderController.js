@@ -1,6 +1,6 @@
 import Order from "../models/order.js";
 import Product from "../models/product.js";
-import stripe from "stripe";
+import Stripe from "stripe";
 import User from "../models/User.js";
 
 // Place Order COD : /api/order/cod
@@ -63,7 +63,7 @@ const order = await Order.create({
         paymentType:"Online",
     });
       // Stripe Gateway Initialize
-    const stripeInstance = new stripe (process.env.STRIPE_SECRET_KEY);
+    const stripeInstance = new Stripe (process.env.STRIPE_SECRET_KEY);
         // create line items for stripe
     const line_items = productData.map((item)=>{
         return {
@@ -94,54 +94,94 @@ return res.json({success: true, url: session.url})
     }
 }
 // Stripe Webhooks to Verify Payments Action: /stripe
-export const stripeWebhooks = async (request, response)=>{
-    // Stripe Gateway Initialize
-    const stripeInstance = new stripe (process.env.STRIPE_SECRET_KEY);
-    const sig = request.headers["stripe-signature"];
-    let event;
-    try {
-        event = stripeInstance.webhooks.constructEvent(
-            request.body,
-            sig,
-            process.env.STRIPE_WEBHOOK_SECRET
-        );
-    } catch (error) {
-        return response.status(400).send(`Webhook Error: ${error.message}`)
-    }
+// export const stripeWebhooks = async (request, response)=>{
+//     // Stripe Gateway Initialize
+//     const stripeInstance = new Stripe (process.env.STRIPE_SECRET_KEY);
+//     const sig = request.headers["stripe-signature"];
+//     let event;
+//     try {
+//         event = stripeInstance.webhooks.constructEvent(
+//             request.body,
+//             sig,
+//             process.env.STRIPE_WEBHOOK_SECRET
+//         );
+//     } catch (error) {
+//         return response.status(400).send(`Webhook Error: ${error.message}`)
+//     }
 
-// Handle the event
-switch (event.type) {
-    case "payment_intent.succeeded":{
-        const paymentIntent = event.data.object;
-        const paymentIntentId = paymentIntent.id;
-        // Getting Session Metadata
-        const session = await stripeInstance.checkout.sessions.list({
-            payment_intent: paymentIntentId,
-        });
-        const { orderId, userId } = session.data[0].metadata;
-        //Mark payment as paid
-        await Order.findByIdAndUpdate(orderId, {isPaid:true});
-        //clear user cart
-        await User.findByIdAndUpdate(userId, {cartItems: {}});
-        break;
+// // Handle the event
+// switch (event.type) {
+//     case "payment_intent.succeeded":{
+//         const paymentIntent = event.data.object;
+//         const paymentIntentId = paymentIntent.id;
+//         // Getting Session Metadata
+//         const session = await stripeInstance.checkout.sessions.list({
+//             payment_intent: paymentIntentId,
+//         });
+//         const { orderId, userId } = session.data[0].metadata;
+//         //Mark payment as paid
+//         await Order.findByIdAndUpdate(orderId, {isPaid:true});
+//         //clear user cart
+//         await User.findByIdAndUpdate(userId, {cartItems: {}});
+//         break;
+//     }
+//     case "payment_intent.failed":{
+//         const paymentIntent = event.data.object;
+//         const paymentIntentId = paymentIntent.id;
+//         // Getting Session Metadata
+//         const session = await stripeInstance.checkout.sessions.list({
+//             payment_intent: paymentIntentId,
+//         });
+//         const { orderId } = session.data[0].metadata;
+//         await Order.findByIdAndDelete(orderId);
+//         break;
+//     }
+//     default:
+//         console.error(`Unhandled event type ${event.type}`)
+//     break;
+// }
+// response.json({received:true})
+// }
+export const stripeWebhooks = async (req, res) => {
+  const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
+  const sig = req.headers["stripe-signature"];
+  let event;
+
+  try {
+    event = stripeInstance.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    console.error("Webhook signature verification failed:", err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  switch (event.type) {
+    case "checkout.session.completed": {
+      const session = event.data.object;
+      const { orderId, userId } = session.metadata;
+
+      console.log("Payment completed for order:", orderId);
+
+      await Order.findByIdAndUpdate(orderId, { isPaid: true });
+      await User.findByIdAndUpdate(userId, { cartItems: {} });
+
+      break;
     }
-    case "payment_intent.failed":{
-        const paymentIntent = event.data.object;
-        const paymentIntentId = paymentIntent.id;
-        // Getting Session Metadata
-        const session = await stripeInstance.checkout.sessions.list({
-            payment_intent: paymentIntentId,
-        });
-        const { orderId } = session.data[0].metadata;
-        await Order.findByIdAndDelete(orderId);
-        break;
+    case "checkout.session.expired": {
+      const session = event.data.object;
+      const { orderId } = session.metadata;
+      await Order.findByIdAndDelete(orderId);
+      break;
     }
     default:
-        console.error(`Unhandled event type ${event.type}`)
-    break;
-}
-response.json({recieved:true})
-}
+      console.log(`Unhandled event type ${event.type}`);
+  }
+
+  res.json({ received: true });
+};
 // Get Orders by User ID: /api/order/user
 export const getUserOrders = async (req, res)=>{
     try {
