@@ -19,7 +19,7 @@ const port = process.env.PORT || 4000;
 await connectDb();
 await connectCloudinary();
 //Allow multiple origins
-const allowedOrigins = ['http://localhost:5173']
+const allowedOrigins = ['http://localhost:5173','https://veggie-bash-frt.vercel.app']
 
 app.post('/stripe',express.raw({type:'application/json'}),stripeWebhooks);
 
