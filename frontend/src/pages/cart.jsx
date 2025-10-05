@@ -21,7 +21,7 @@ const Cart = () => {
     }
     const getUserAddress = async ()=>{
         try {
-            const {data} = await axios.get("http://localhost:4000/api/address/get", { withCredentials: true });
+            const {data} = await axios.get("/api/address/get", { withCredentials: true });
             if (data.success){
                 setAddresses (data. addresses)
                 if(data.addresses.length > 0){

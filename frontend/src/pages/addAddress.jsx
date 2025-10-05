@@ -34,7 +34,8 @@ function AddAddress() {
     const onSubmitHandler = async(e)=>{
         e.preventDefault();
         try {
-            const { data } = await axios.post("http://localhost:4000/api/address/add",
+            // const { data } = await axios.post("http://localhost:4000/api/address/add",
+            const { data } = await axios.post("/api/address/add",
                 { ...address, userId: user._id },{ withCredentials: true } // ✅ send JWT cookie
             );
             if (data.success) {

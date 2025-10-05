@@ -7,7 +7,8 @@ const Orders = () => {
     const {axios} = useAppcontext();
     const fetchOrders = async()=>{
         try {
-            const {data} = await axios.get('http://localhost:4000/api/order/seller') 
+            // const {data} = await axios.get('http://localhost:4000/api/order/seller') 
+            const {data} = await axios.get('/api/order/seller') 
             if(data.success){
                 setOrders(data.orders)
             }else{

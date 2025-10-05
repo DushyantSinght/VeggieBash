@@ -9,7 +9,7 @@ const SellerLayout = () => {
     const {navigate,axios} = useAppcontext();
     const logout = async()=>{
         try {
-            const {data} = await axios.get('//localhost:4000/api/seller/logout');
+            const {data} = await axios.get('/api/seller/logout');
             if(data.success){
                 toast.success(data.message)
                 navigate('/')

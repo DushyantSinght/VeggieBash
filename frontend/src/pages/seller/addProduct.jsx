@@ -26,7 +26,8 @@ const onSubmitHandler = async (event) => {
         for (let i = 0; i < files.length; i++) {
             formData.append('images', files[i])
         }
-        const {data} = await axios.post('http://localhost:4000/api/product/add',formData)
+        // const {data} = await axios.post('http://localhost:4000/api/product/add',formData)
+        const {data} = await axios.post('api/product/add',formData)
 
         if(data.success){
             toast.success(data.message);
