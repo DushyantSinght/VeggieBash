@@ -42,7 +42,8 @@ const Cart = () => {
             }
 // Place Order with COD
         if (paymentOption === "COD"){
-            const {data} = await axios.post('http://localhost:4000/api/order/cod', {
+            // const {data} = await axios.post('http://localhost:4000/api/order/cod', {
+            const {data} = await axios.post('/api/order/cod', {
             userId: user._id,
             items: cartArray.map(item=> ({product: item._id, quantity: item.quantity})), 
             address: selectedAddress._id
@@ -56,7 +57,8 @@ const Cart = () => {
                 toast.error(data.message);
             }
         }else{
-            const {data} = await axios.post('http://localhost:4000/api/order/stripe', {
+            // const {data} = await axios.post('http://localhost:4000/api/order/stripe', {
+            const {data} = await axios.post('/api/order/stripe', {
             userId: user._id,
             items: cartArray.map(item=> ({product: item._id, quantity: item.quantity})), 
             address: selectedAddress._id
@@ -87,7 +89,8 @@ const Cart = () => {
     useEffect(() => {
     const fetchCart = async () => {
     try {
-      const { data } = await axios.get("http://localhost:4000/api/cart/get", {
+        // const { data } = await axios.get("http://localhost:4000/api/cart/get", {
+      const { data } = await axios.get("/api/cart/get", {
         withCredentials: true,
       });
       if (data.success) {
