@@ -3,7 +3,6 @@ import { data, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { dummyProducts } from "../src/assets/assets";
 import axios from 'axios';
-import { updateCart } from "../../server/controllers/cartController";
 
 //it will also send cookies
 axios.defaults.withCredentials = true;
