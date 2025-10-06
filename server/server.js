@@ -19,19 +19,28 @@ const port = process.env.PORT || 4000;
 await connectDb();
 await connectCloudinary();
 //Allow multiple origins
-const allowedOrigins = ['http://localhost:5173','https://veggie-bash-frt.vercel.app']
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://veggie-bash-frt.vercel.app',
+  process.env.FRONTEND_ORIGIN
+].filter(Boolean)
 
 app.post('/stripe',express.raw({type:'application/json'}),stripeWebhooks);
 
 //Middeleware configuration
+app.set('trust proxy', 1);
 app.use(express.json());
 app.use(cookieParser());
-// app.use(cors({origin: allowedOrigins, Credentials: true}));
 //cors allows frontend 5173 to send req on 4000 of backend
 app.use(cors({
-  origin: allowedOrigins, // your frontend dev server
-  credentials: true,               // if using cookies/sessions
+  origin(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error(`CORS blocked for origin: ${origin}`), false);
+  },
+  credentials: true
 }));
+app.options('*', cors());
 
 app.get("/",(req,res)=>{
     res.send("API is working");
