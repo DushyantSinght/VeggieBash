@@ -19,35 +19,19 @@ const port = process.env.PORT || 4000;
 await connectDb();
 await connectCloudinary();
 //Allow multiple origins
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://veggie-bash-frt.vercel.app',
-  process.env.FRONTEND_ORIGIN
-].filter(Boolean)
+const allowedOrigins = ['http://localhost:5173','https://veggie-bash-frt.vercel.app']
 
 app.post('/stripe',express.raw({type:'application/json'}),stripeWebhooks);
 
 //Middeleware configuration
-app.set('trust proxy', 1);
 app.use(express.json());
 app.use(cookieParser());
+// app.use(cors({origin: allowedOrigins, Credentials: true}));
 //cors allows frontend 5173 to send req on 4000 of backend
 app.use(cors({
-  origin(origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    // Allow Vercel preview deployments (dynamic subdomains)
-    try {
-      const url = new URL(origin);
-      if (url.hostname.endsWith('.vercel.app')) {
-        return callback(null, true);
-      }
-    } catch (_) {}
-    return callback(new Error(`CORS blocked for origin: ${origin}`), false);
-  },
-  credentials: true
+  origin: allowedOrigins, // your frontend dev server
+  credentials: true,               // if using cookies/sessions
 }));
-app.options('*', cors());
 
 app.get("/",(req,res)=>{
     res.send("API is working");
@@ -60,11 +44,6 @@ app.use("/api/cart",cartRouter);
 app.use("/api/address",addressRouter);
 app.use("/api/order",orderRouter);
 
-// In Vercel serverless, do not start a listener; export the app instead
-if (!process.env.VERCEL) {
-    app.listen(port,()=>{
-        console.log(`server is running on ${port}`);
-    })
-}
-
-export default app;
+app.listen(port,()=>{
+    console.log(`server is running on ${port}`);
+})
