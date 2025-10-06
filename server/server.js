@@ -36,6 +36,13 @@ app.use(cors({
   origin(origin, callback) {
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
+    // Allow Vercel preview deployments (dynamic subdomains)
+    try {
+      const url = new URL(origin);
+      if (url.hostname.endsWith('.vercel.app')) {
+        return callback(null, true);
+      }
+    } catch (_) {}
     return callback(new Error(`CORS blocked for origin: ${origin}`), false);
   },
   credentials: true
@@ -53,6 +60,11 @@ app.use("/api/cart",cartRouter);
 app.use("/api/address",addressRouter);
 app.use("/api/order",orderRouter);
 
-app.listen(port,()=>{
-    console.log(`server is running on ${port}`);
-})
+// In Vercel serverless, do not start a listener; export the app instead
+if (!process.env.VERCEL) {
+    app.listen(port,()=>{
+        console.log(`server is running on ${port}`);
+    })
+}
+
+export default app;
