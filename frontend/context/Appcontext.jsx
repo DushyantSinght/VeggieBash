@@ -27,7 +27,7 @@ export const Appcontextprovider = ({ children }) => {
 //Fetch seller status
 const fetchSeller = async()=>{
   try {
-    const {data} = await axios.get("http://localhost:4000/api/seller/is-auth", { withCredentials: true });
+    const {data} = await axios.get("/api/seller/is-auth", { withCredentials: true });
     if(data.success){
       setIsSeller(true);
     }
@@ -41,7 +41,7 @@ const fetchSeller = async()=>{
 //Fetch user auth status, user data and cart items
 const fetchUser = async() => {
   try {
-    const {data} = await axios.get('http://localhost:4000/api/user/is-auth', {
+    const {data} = await axios.get('/api/user/is-auth', {
       withCredentials: true, 
     });
     if (data.success){
@@ -55,7 +55,7 @@ const fetchUser = async() => {
 // ✅ Fetch dummy products on load
 const fetchProducts = async () => {
   try {
-    const {data} = await axios.get('http://localhost:4000/api/product/list')
+    const {data} = await axios.get('/api/product/list')
     if(data.success){
       setProducts(data.products)
       console.log("working")
@@ -78,7 +78,7 @@ useEffect(() => {
 useEffect(()=>{
   const updateCart = async ()=>{
     try {
-    const {data} = await axios.post('http://localhost:4000/api/cart/update',{cartItems});
+    const {data} = await axios.post('/api/cart/update',{cartItems});
     if(!data.success){
       toast.error(data.message);
     }
