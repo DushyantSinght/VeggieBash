@@ -70,10 +70,23 @@ const port = process.env.PORT || 4000;
 await connectDb();
 await connectCloudinary();
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://veggie-bash-frt.vercel.app",
-];
+// const allowedOrigins = [
+//   "http://localhost:5173",
+//   "https://veggie-bash-frt.vercel.app",
+// ];
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || origin.includes("vercel.app") || origin === "http://localhost:5173") {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
 
 // Stripe webhook FIRST (raw body)
 app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhooks);
