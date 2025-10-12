@@ -74,6 +74,17 @@ await connectCloudinary();
 //   "http://localhost:5173",
 //   "https://veggie-bash-frt.vercel.app",
 // ];
+
+// Stripe webhook FIRST (raw body)
+app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhooks);
+
+// CORS, cookies, JSON middlewares
+// app.use(
+//   cors({
+//     origin: allowedOrigins,
+//     credentials: true,
+//   })
+// );
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -83,18 +94,6 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true,
-  })
-);
-
-
-// Stripe webhook FIRST (raw body)
-app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhooks);
-
-// CORS, cookies, JSON middlewares
-app.use(
-  cors({
-    origin: allowedOrigins,
     credentials: true,
   })
 );
