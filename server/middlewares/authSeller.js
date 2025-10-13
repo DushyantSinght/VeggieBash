@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 const authSeller = async(req,res,next)=>{
     const sellerToken = req.cookies?.sellerToken;
     if(!sellerToken){
-        return res.json({sucess : false, message : "Not Authorised"});
+        return res.json({success : false, message : "Not Authorised"});
     }
     try {
         const tokenDecode = jwt.verify(sellerToken,process.env.JWT_SECRET)
@@ -12,10 +12,11 @@ const authSeller = async(req,res,next)=>{
             next();
         }
         else{
-            return res.json({sucess : false, message : "Not Authorised"});
+            return res.json({success : false, message : "Not Authorised"});
         }
     } catch (error) {
-        return res.json({sucess : false, message : error.message});
+        console.log("JWT verify error:", error.message); // log for production
+        return res.json({success : false, message : error.message});
     }
 }
 export default authSeller;
