@@ -1,54 +1,6 @@
 import { v2 as cloudinary } from "cloudinary"
 import Product from "../models/product.js"
 import fs from "fs"
-// export const addProduct = async (req, res) => {
-//   try {
-//     const productData = JSON.parse(req.body.productData);
-//     const images = req.files;
-
-//     if (!images || images.length === 0) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "No images uploaded",
-//       });
-//     }
-
-//     // Upload files to Cloudinary
-//     const imagesUrl = await Promise.all(
-//       images.map(async (item) => {
-//         const result = await cloudinary.uploader.upload(item.path, {
-//           resource_type: "image",
-//           folder: "products",
-//         });
-
-//         console.log("✅ Uploaded to Cloudinary:", result.secure_url);
-
-//         // Clean up local file
-//         fs.unlink(item.path, (err) => {
-//           if (err) console.error("❌ Failed to remove local file:", err.message);
-//         });
-
-//         return result.secure_url;
-//       })
-//     );
-
-//     // Save product with Cloudinary URLs
-//     const newProduct = await Product.create({ ...productData, image: imagesUrl });
-
-//     return res.status(201).json({
-//       success: true,
-//       message: "Product added successfully!",
-//       product: newProduct,
-//     });
-//   } catch (error) {
-//     console.error("❌ AddProduct Error:", error.message);
-//     return res.status(500).json({
-//       success: false,
-//       message: error.message,
-//     });
-//   }
-// };
-// productController.js
 export const addProduct = async (req, res) => {
   try {
     const productData = JSON.parse(req.body.productData);
