@@ -4,7 +4,6 @@ A full-stack grocery e-commerce platform showcasing modern web development pract
 
 **Live Demo:**
 - 🌐 **Frontend:** https://veggie-bash-frt.vercel.app
-- 🔧 **Backend:** https://veggiebash-backend.vercel.app
 
 ---
 
@@ -135,42 +134,6 @@ veggiebash/
 
 ---
 
-## ⚙️ Environment Variables
-
-### Backend (`.env`)
-```env
-# Database
-MONGO_URI=mongodb+srv://user:password@cluster.mongodb.net/veggiebash
-
-# Authentication
-JWT_SECRET=your_jwt_secret_key_here
-JWT_EXPIRE=7d
-
-# Seller Credentials
-SELLER_EMAIL=seller@example.com
-SELLER_PASSWORD=secure_password
-
-# Cloudinary
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-
-# Payment
-STRIPE_SECRET_KEY=sk_test_your_stripe_key
-STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
-
-# CORS
-FRONTEND_URL=https://veggie-bash-frt.vercel.app
-NODE_ENV=production
-```
-
-### Frontend (`.env`)
-```env
-VITE_BACKEND_URL=https://veggiebash-backend.vercel.app
-VITE_CURRENCY=₹
-```
-
----
 
 ## 🚀 Getting Started
 
